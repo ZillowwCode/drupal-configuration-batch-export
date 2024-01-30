@@ -28,11 +28,6 @@ class BatchService {
             ];
         }
 
-        $operations[] = [
-            '\Drupal\configuration_batch_export\Service\BatchService::batch_operation_close_zip_file',
-            []
-        ];
-
         $batch = [
             'title' => t('Exporting configuration'),
             'operations' => $operations,
@@ -50,14 +45,11 @@ class BatchService {
             $zip = \Drupal::service('configuration_batch_export.helper')->getArchive();
             $zip->addFromString($configName . '.yml', $ymlData);
     
+            $zip->close();
+
             $context['results']['zip'] = $zip;
             $context['results']['archiveName'] = $archiveName;
         }
-    }
-
-    public static function batch_operation_close_zip_file(&$context) {
-        $zip = $context['results']['zip'];
-        $zip->close();
     }
 
     public static function batch_operation_finished($success, $results, $operations) {
@@ -66,11 +58,7 @@ class BatchService {
         if ($success) {
             $messenger->addMessage(t('Batch export of the entire configuration finished.'));
 
-            // header('Content-Type: application/zip');
-            // header('Content-Disposition: attachment; filename="' . $results['archiveName'] . '"');
-            // header('Content-Length: ' . filesize($helperService->getArchiveRealPath()));
-            // readfile($helperService->getArchiveRealPath());
-            // unlink($helperService->getArchiveRealPath());
+            // TODO: Find a good way to download the file AND redirect the user to the form.
             
             $zipArchivePath = $helperService->getArchiveRealPath();
 
