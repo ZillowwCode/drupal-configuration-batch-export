@@ -1,0 +1,7 @@
+name: Configuration Batch Export
+type: module
+description: Configuration Batch Export is an improvement to core configuration management system to make it compatible with the batch API for exports.
+core_version_requirement: ^10
+package: Zilloww
+dependencies:
+  - drupal:config_suite

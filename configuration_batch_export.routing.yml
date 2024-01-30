@@ -1,0 +1,7 @@
+configuration_batch_export.export:
+  path: '/admin/config/development/batch-export'
+  defaults:
+    _form: '\Drupal\configuration_batch_export\Form\ExportForm'
+    _title: 'Configuration Batch Export'
+  requirements:
+    _permission: 'administer site configuration'

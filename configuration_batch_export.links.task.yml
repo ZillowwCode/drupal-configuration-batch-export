@@ -1,0 +1,5 @@
+configuration_batch_export_tab:
+  title: 'Batch Export'
+  route_name: configuration_batch_export.export
+  description: 'Export configuration with batch API.'
+  base_route: config.sync

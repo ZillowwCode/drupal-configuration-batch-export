@@ -1,0 +1,7 @@
+services:
+  configuration_batch_export.batch:
+    class: Drupal\configuration_batch_export\Service\BatchService
+    arguments: ['@configuration_batch_export.helper']
+  configuration_batch_export.helper:
+    class: Drupal\configuration_batch_export\Service\HelperService
+    arguments: ['@config.factory']
