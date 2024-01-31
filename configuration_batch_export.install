@@ -1,0 +1,6 @@
+<?php
+
+function configuration_batch_export_install() {
+    $messenger = \Drupal::messenger();
+    $messenger->addMessage(t('<em>Configuration Batch Export</em>: From now, you can export your full configuration using Batch API <a href="/admin/config/development/batch-export">here</a>!'));
+}
