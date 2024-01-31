@@ -24,14 +24,13 @@ class HelperService {
     public function getArchiveName() {
         $siteName = $this->configFactory->get('system.site')->get('name');
         $siteName = str_replace(' ', '_', $siteName);
-        $date = date('Y-m-d_H-i');
+        $date = date('Y-m-d_H-i-s');
 
         return $siteName . '_' . $date . '.zip';
     }
 
-    public function getArchiveRealPath() {
+    public function getArchiveRealPath($archiveName) {
         $realpath = \Drupal::service('file_system')->realpath($this->ARCHIVE_PATH);
-        $archiveName = $this->getArchiveName();
 
         return $realpath . '/' . $archiveName;
     }

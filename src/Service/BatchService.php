@@ -12,10 +12,7 @@ class BatchService {
         $this->helperService = $helperService;
     }
 
-    public function batch_start($configs_per_chunk) {
-        $archiveName = $this->helperService->getArchiveName();
-        $zip = $this->helperService->createArchive($archiveName);
-    
+    public function batch_start($configs_per_chunk) {    
         $configNames = $this->helperService->getConfigNames();
         
         $chunks = array_chunk($configNames, $configs_per_chunk);
@@ -24,9 +21,14 @@ class BatchService {
         foreach($chunks as $chunk) {
             $operations[] = [
                 '\Drupal\configuration_batch_export\Service\BatchService::batch_operation_process_chunk',
-                [$chunk, $archiveName]
+                [$chunk]
             ];
         }
+
+        $operations[] = [
+            '\Drupal\configuration_batch_export\Service\BatchService::batch_operation_process_archive',
+            []
+        ];
 
         $batch = [
             'title' => t('Exporting configuration'),
@@ -37,19 +39,26 @@ class BatchService {
         batch_set($batch);
     }
 
-    public static function batch_operation_process_chunk($chunk, $archiveName, &$context) {
+    public static function batch_operation_process_chunk($chunk, &$context) {
         foreach($chunk as $configName) {
             $configData = \Drupal::configFactory()->get($configName)->getRawData();
             $ymlData = \Symfony\Component\Yaml\Yaml::dump($configData, 10, 2);
-    
-            $zip = \Drupal::service('configuration_batch_export.helper')->getArchive();
-            $zip->addFromString($configName . '.yml', $ymlData);
-    
-            $zip->close();
 
-            $context['results']['zip'] = $zip;
-            $context['results']['archiveName'] = $archiveName;
+            $context['results']['configYmlFiles'][$configName] = $ymlData;
         }
+    }
+
+    public static function batch_operation_process_archive(&$context) {
+        $archiveName = \Drupal::service('configuration_batch_export.helper')->getArchiveName();
+        $zip = \Drupal::service('configuration_batch_export.helper')->createArchive($archiveName);
+
+        foreach ($context['results']['configYmlFiles'] as $configName => $ymlData) {
+            $zip->addFromString($configName . '.yml', $ymlData);
+        }
+
+        $zip->close();
+
+        $context['results']['zipArchivePath'] = \Drupal::service('configuration_batch_export.helper')->getArchiveRealPath($archiveName);
     }
 
     public static function batch_operation_finished($success, $results, $operations) {
@@ -58,7 +67,7 @@ class BatchService {
         if ($success) {
             $messenger->addMessage(t('Batch export of the entire configuration finished.'));
             
-            $zipArchivePath = $helperService->getArchiveRealPath();
+            $zipArchivePath = $results['zipArchivePath'];
 
             $response = new \Symfony\Component\HttpFoundation\BinaryFileResponse($zipArchivePath);
             $response->setContentDisposition(
