@@ -57,8 +57,6 @@ class BatchService {
         $messenger = \Drupal::messenger();
         if ($success) {
             $messenger->addMessage(t('Batch export of the entire configuration finished.'));
-
-            // TODO: Find a good way to download the file AND redirect the user to the form.
             
             $zipArchivePath = $helperService->getArchiveRealPath();
 
@@ -68,22 +66,11 @@ class BatchService {
                 basename($zipArchivePath)
             );
 
-            batch_set([
-                'title' => t('Deleting temporary file'),
-                'operations' => [
-                    ['\Drupal\configuration_batch_export\Service\BatchService::batch_operation_delete_temp_file', [$zipArchivePath]],
-                ],
-                'finished' => '\Drupal\configuration_batch_export\Service\BatchService::batch_operation_delete_temp_file_finished',
-            ]);
-
             $response->send();
+
+            unlink($zipArchivePath);
         } else {
             $messenger->addMessage(t('An unknown error ocurred while exporting the website config.'), 'error');
         }
-    }
-
-    public static function batch_operation_delete_temp_file($zipFilePath, &$context) {
-        // Delete the temporary file.
-        unlink($zipFilePath);
     }
 }
