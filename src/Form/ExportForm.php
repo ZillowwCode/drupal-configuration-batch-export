@@ -17,10 +17,16 @@ class ExportForm extends FormBase {
         $this->DEFAULT_CONFIGS_PER_CHUNK = 40;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getFormId() {
         return 'configuration_batch_export_form';
     }
  
+    /**
+     * {@inheritdoc}
+     */
     public function buildForm(array $form, FormStateInterface $form_state, $username = NULL) {
         $form['configs_per_chunk'] = [
             '#type' => 'number',
@@ -38,6 +44,9 @@ class ExportForm extends FormBase {
         return $form;
     }
  
+    /**
+     * {@inheritdoc}
+     */
     public function validateForm(array &$form, FormStateInterface $form_state) {
         $configs_per_chunk = $form_state->getValue('configs_per_chunk');
         
@@ -46,6 +55,9 @@ class ExportForm extends FormBase {
         }
     }
  
+    /**
+     * {@inheritdoc}
+     */
     public function submitForm(array &$form, FormStateInterface $form_state) {
         $this->batchService->batch_start($form_state->getValue('configs_per_chunk'));
         $form_state->setRedirect('configuration_batch_export.download_archive');
