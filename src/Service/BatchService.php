@@ -31,15 +31,20 @@ class BatchService {
         ];
 
         $batch = [
-            'title' => t('Exporting configuration'),
+            'title' => t('Configuration Batch Export'),
             'operations' => $operations,
             'finished' => '\Drupal\configuration_batch_export\Service\BatchService::batch_operation_finished',
+            'init_message' => t('Starting export of the entire configuration...'),
+            'error_message' => t('An error ocurred while exporting the entire configuration.'),
+            'progress_message' => t('Processed and exported @current out of @total config files. Estimated time: @estimate. Elapsed time: @elapsed.'),
         ];
 
         batch_set($batch);
     }
 
     public static function batch_operation_process_chunk($chunk, &$context) {
+        $context['message'] = t('Processing configurations...');
+        
         foreach($chunk as $configName) {
             $configData = \Drupal::configFactory()->get($configName)->getRawData();
             $ymlData = \Symfony\Component\Yaml\Yaml::dump($configData, 10, 2);
@@ -49,6 +54,8 @@ class BatchService {
     }
 
     public static function batch_operation_process_archive(&$context) {
+        $context['message'] = t('Creating archive...');
+
         $archiveName = \Drupal::service('configuration_batch_export.helper')->getArchiveName();
         $zip = \Drupal::service('configuration_batch_export.helper')->createArchive($archiveName);
 
