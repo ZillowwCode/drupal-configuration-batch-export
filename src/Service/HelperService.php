@@ -21,6 +21,10 @@ class HelperService {
         }
     }
 
+    public function getTempFolderPath() {
+        return \Drupal::service('file_system')->realpath($this->ARCHIVE_PATH);
+    }
+
     public function getArchiveName() {
         $siteName = $this->configFactory->get('system.site')->get('name');
         $siteName = str_replace(' ', '_', $siteName);

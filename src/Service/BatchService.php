@@ -73,18 +73,6 @@ class BatchService {
         $messenger = \Drupal::messenger();
         if ($success) {
             $messenger->addMessage(t('Batch export of the entire configuration finished.'));
-            
-            $zipArchivePath = $results['zipArchivePath'];
-
-            $response = new \Symfony\Component\HttpFoundation\BinaryFileResponse($zipArchivePath);
-            $response->setContentDisposition(
-                \Symfony\Component\HttpFoundation\ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                basename($zipArchivePath)
-            );
-
-            $response->send();
-
-            unlink($zipArchivePath);
         } else {
             $messenger->addMessage(t('An unknown error ocurred while exporting the website config.'), 'error');
         }

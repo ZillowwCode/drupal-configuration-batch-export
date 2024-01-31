@@ -5,3 +5,9 @@ configuration_batch_export.export:
     _title: 'Configuration Batch Export'
   requirements:
     _permission: 'administer site configuration'
+configuration_batch_export.download_archive:
+  path: '/admin/config/development/batch-export/download'
+  defaults:
+    _form: '\Drupal\configuration_batch_export\Form\DownloadConfirmForm'
+  requirements:
+    _permission: 'administer site configuration'

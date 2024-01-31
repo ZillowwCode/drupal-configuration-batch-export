@@ -48,5 +48,6 @@ class ExportForm extends FormBase {
  
     public function submitForm(array &$form, FormStateInterface $form_state) {
         $this->batchService->batch_start($form_state->getValue('configs_per_chunk'));
+        $form_state->setRedirect('configuration_batch_export.download_archive');
     }
 }
