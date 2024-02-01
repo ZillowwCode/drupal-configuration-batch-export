@@ -1,5 +1,8 @@
 # Configuration Batch Export
 
+## IMPORTANT NOTICE
+This repo has been moved to git.drupalcode.org to make it open to the community. Visit the [new repo](https://git.drupalcode.org/project/configuration_batch_export) to see more.
+
 The Configuration Batch Export module simplifies the process of exporting your website's complete configuration using the Batch API.
 
 For a detailed overview of the module, check out the
